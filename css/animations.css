@@ -1,0 +1,380 @@
+/* ═══════════════════════════════════════════════════════
+   HERO SCENE ANIMATIONS
+   ═══════════════════════════════════════════════════════ */
+
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0F1220 0%, #1A1F32 50%, #1C2030 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding-top: var(--nav-h);
+}
+
+/* ── City skyline ── */
+.hero-city {
+  position: absolute;
+  bottom: 140px;
+  left: 0; right: 0;
+  height: 320px;
+  pointer-events: none;
+}
+
+.hero-city svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ── Road ── */
+.hero-road {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 140px;
+}
+
+.road-surface {
+  position: absolute;
+  inset: 0;
+  background: #1C2030;
+  border-top: 3px solid #2A3050;
+}
+
+.road-center-line {
+  position: absolute;
+  top: 50%; left: 0; right: 0;
+  height: 3px;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(
+    to right,
+    transparent 0px,
+    transparent 30px,
+    rgba(255, 255, 255, 0.18) 30px,
+    rgba(255, 255, 255, 0.18) 65px
+  );
+  animation: road-scroll 1.4s linear infinite;
+}
+
+@keyframes road-scroll {
+  from { background-position: 0 0; }
+  to   { background-position: -95px 0; }
+}
+
+/* ── Vehicle base ── */
+.hero-vehicle {
+  position: absolute;
+  bottom: 72px;
+  will-change: transform;
+}
+
+/* ── Car (slow, stuck) ── */
+.hero-car {
+  bottom: 90px;
+  animation: car-crawl 10s linear infinite;
+}
+
+@keyframes car-crawl {
+  0%   { left: -90px; transform: none; }
+  28%  { left: 32%; transform: none; }
+  30%  { left: 32%; }
+  52%  { left: 32%; }
+  54%  { left: 32%; transform: none; }
+  100% { left: 110%; transform: none; }
+}
+
+/* exhaust smoke */
+.exhaust-container {
+  position: absolute;
+  left: 2px;
+  top: 14px;
+}
+
+.exhaust-puff {
+  position: absolute;
+  left: 0; top: 0;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: rgba(160, 160, 170, 0.55);
+  animation: exhaust 2.2s ease-out infinite;
+}
+
+.exhaust-puff:nth-child(1) { animation-delay: 0s; }
+.exhaust-puff:nth-child(2) { animation-delay: 0.7s; }
+.exhaust-puff:nth-child(3) { animation-delay: 1.4s; }
+
+@keyframes exhaust {
+  0%   { transform: translate(0, 0) scale(0.4); opacity: 0.75; }
+  40%  { opacity: 0.5; }
+  100% { transform: translate(-38px, -28px) scale(2.8); opacity: 0; }
+}
+
+/* ── Scooter (fast, weaving) ── */
+.hero-scooter {
+  bottom: 55px;
+  animation: scooter-weave 5.5s linear infinite;
+  animation-delay: -1.5s;
+}
+
+@keyframes scooter-weave {
+  0%   { left: -60px; transform: translateY(0) rotate(-1deg); }
+  20%  { transform: translateY(-3px) rotate(1.5deg); }
+  40%  { transform: translateY(2px) rotate(-1deg); }
+  60%  { transform: translateY(-2px) rotate(1deg); }
+  80%  { transform: translateY(0) rotate(-0.5deg); }
+  100% { left: 110%; transform: translateY(0) rotate(0); }
+}
+
+/* ── Bicycle (smooth, fastest) ── */
+.hero-bike {
+  bottom: 24px;
+  animation: bike-roll 4s linear infinite;
+  animation-delay: -0.8s;
+}
+
+@keyframes bike-roll {
+  from { left: -55px; }
+  to   { left: 110%; }
+}
+
+/* Wheel spin — applied to SVG elements via class */
+.hero-bike .wheel {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wheel-spin 0.5s linear infinite;
+}
+
+.hero-bike .spoke {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wheel-spin 0.5s linear infinite;
+}
+
+@keyframes wheel-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Hero content ── */
+.hero-content {
+  position: relative;
+  z-index: 10;
+  padding: 0 var(--section-px);
+  max-width: calc(var(--max-w) + 2 * var(--section-px));
+  margin: 0 auto;
+  width: 100%;
+  padding-bottom: 160px;
+}
+
+.hero-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--scooter-color);
+  margin-bottom: 16px;
+  opacity: 0;
+  animation: fade-up 0.8s 0.2s forwards ease-out;
+}
+
+.hero-headline {
+  font-size: clamp(40px, 7vw, 80px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.08;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fade-up 0.9s 0.4s forwards ease-out;
+}
+
+.hero-headline em {
+  font-style: normal;
+  color: var(--car-color);
+  position: relative;
+}
+
+.hero-sub {
+  font-size: clamp(16px, 2vw, 19px);
+  color: rgba(255,255,255,0.65);
+  max-width: 540px;
+  line-height: 1.65;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fade-up 0.9s 0.6s forwards ease-out;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: fade-up 0.9s 0.8s forwards ease-out;
+}
+
+.hero-actions .btn-outline {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.85);
+}
+
+.hero-actions .btn-outline:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.4);
+  color: #fff;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fade-up 0.9s 1s forwards ease-out;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hero-stat strong {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+
+.hero-stat span {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  max-width: 140px;
+  line-height: 1.4;
+}
+
+.hero-stat sup {
+  font-size: 9px;
+  color: var(--scooter-color);
+}
+
+/* ── Fade-up keyframe (hero only) ── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   RACE TRACK ANIMATIONS
+   ═══════════════════════════════════════════════════════ */
+
+.race-vehicle {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  will-change: transform, opacity, filter;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  transition: none; /* let GSAP control everything */
+}
+
+/* Race finish animation */
+.race-vehicle.finished {
+  animation: finish-bounce 0.4s ease-out;
+}
+
+@keyframes finish-bounce {
+  0%   { transform: translateY(-50%) scale(1); }
+  40%  { transform: translateY(-65%) scale(1.1); }
+  100% { transform: translateY(-50%) scale(1); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION FADE-INS (used by animations.js)
+   ═══════════════════════════════════════════════════════ */
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* ═══════════════════════════════════════════════════════
+   CHALLENGE SECTION BACKGROUND
+   ═══════════════════════════════════════════════════════ */
+
+.challenge-section {
+  position: relative;
+  background: linear-gradient(135deg, #0F1220 0%, #1A1F32 60%, #0D1A2A 100%);
+  overflow: hidden;
+}
+
+.challenge-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 50%, rgba(224,90,58,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 80% 30%, rgba(79,142,247,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Animated grid lines */
+.challenge-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(79,142,247,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79,142,247,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: grid-drift 20s linear infinite;
+}
+
+@keyframes grid-drift {
+  from { transform: translateY(0); }
+  to   { transform: translateY(60px); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   ACTIVITY CARD COUNT-UP PULSE
+   ═══════════════════════════════════════════════════════ */
+
+@keyframes count-pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+.count-updated {
+  animation: count-pulse 0.3s ease-out;
+}
+
+/* ═══════════════════════════════════════════════════════
+   LOADING SPINNER
+   ═══════════════════════════════════════════════════════ */
+
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  .hero-city { bottom: 120px; height: 200px; }
+  .hero-road { height: 110px; }
+  .hero-car  { bottom: 68px; }
+  .hero-scooter { bottom: 42px; }
+  .hero-bike { bottom: 16px; }
+  .hero-stats { gap: 24px; }
+  .hero-content { padding-bottom: 130px; }
+}

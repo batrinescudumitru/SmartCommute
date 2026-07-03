@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartCommute — Car vs Scooter vs Bicycle</title>
+  <meta name="description" content="Discover how many hours you lose in traffic every year — and what you could do with them instead.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Local CSS -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/modules.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ NAV -->
+<nav class="site-nav" id="site-nav">
+  <div class="nav-logo">
+    Smart<span>Commute</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#time">Time</a></li>
+    <li><a href="#cost">Costs</a></li>
+    <li><a href="#value">Your Time</a></li>
+    <li><a href="#bibliography">Sources</a></li>
+    <li><a href="#challenge" class="nav-cta">Take the Challenge →</a></li>
+  </ul>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Progress dots -->
+<nav class="progress-dots" aria-label="Page sections">
+  <div class="progress-dot active" data-target="hero" title="Home"></div>
+  <div class="progress-dot" data-target="time" title="Time"></div>
+  <div class="progress-dot" data-target="cost" title="Costs"></div>
+  <div class="progress-dot" data-target="value" title="Your Time"></div>
+  <div class="progress-dot" data-target="bibliography" title="Sources"></div>
+  <div class="progress-dot" data-target="challenge" title="Challenge"></div>
+</nav>
+
+<!-- ═══════════════════════════════════════════ HERO -->
+<section id="hero" class="hero-section">
+  <!-- City skyline SVG -->
+  <div class="hero-city" aria-hidden="true">
+    <svg viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+      <!-- Background buildings -->
+      <rect x="0" y="180" width="60" height="120" fill="#2A2F42"/>
+      <rect x="5" y="200" width="10" height="8" fill="rgba(255,240,100,0.3)"/>
+      <rect x="20" y="195" width="10" height="8" fill="rgba(255,240,100,0.5)"/>
+      <rect x="35" y="205" width="10" height="8" fill="rgba(255,240,100,0.2)"/>
+      <rect x="65" y="150" width="80" height="150" fill="#252A3B"/>
+      <rect x="70" y="160" width="12" height="10" fill="rgba(255,240,100,0.4)"/>
+      <rect x="88" y="160" width="12" height="10" fill="rgba(255,240,100,0.6)"/>
+      <rect x="106" y="160" width="12" height="10" fill="rgba(255,240,100,0.3)"/>
+      <rect x="70" y="180" width="12" height="10" fill="rgba(255,240,100,0.2)"/>
+      <rect x="88" y="180" width="12" height="10" fill="rgba(255,240,100,0.5)"/>
+      <rect x="106" y="180" width="12" height="10" fill="rgba(255,240,100,0.4)"/>
+      <rect x="70" y="200" width="12" height="10" fill="rgba(255,240,100,0.6)"/>
+      <rect x="88" y="200" width="12" height="10" fill="rgba(255,240,100,0.1)"/>
+      <rect x="150" y="100" width="50" height="200" fill="#1E2330"/>
+      <rect x="155" y="110" width="12" height="10" fill="rgba(255,240,100,0.5)"/>
+      <rect x="173" y="110" width="12" height="10" fill="rgba(255,240,100,0.3)"/>
+      <rect x="155" y="130" width="12" height="10" fill="rgba(255,240,100,0.6)"/>
+      <rect x="173" y="130" width="12" height="10" fill="rgba(255,240,100,0.4)"/>
+      <rect x="155" y="150" width="12" height="10" fill="rgba(255,240,100,0.2)"/>
+      <rect x="173" y="150" width="12" height="10" fill="rgba(255,240,100,0.5)"/>
+      <!-- Tall center tower -->
+      <rect x="205" y="60" width="40" height="240" fill="#232840"/>
+      <rect x="220" y="50" width="10" height="15" fill="#1E2330"/>
+      <rect x="210" y="70" width="8" height="8" fill="rgba(255,240,100,0.5)"/>
+      <rect x="224" y="70" width="8" height="8" fill="rgba(255,240,100,0.3)"/>
+      <rect x="210" y="85" width="8" height="8" fill="rgba(255,240,100,0.6)"/>
+      <rect x="224" y="85" width="8" height="8" fill="rgba(255,240,100,0.4)"/>
+      <rect x="210" y="100" width="8" height="8" fill="rgba(255,240,100,0.2)"/>
+      <rect x="224" y="100" width="8" height="8" fill="rgba(255,240,100,0.5)"/>
+      <rect x="250" y="140" width="70" height="160" fill="#2A2F42"/>
+      <rect x="255" y="150" width="12" height="10" fill="rgba(255,240,100,0.4)"/>
+      <rect x="273" y="150" width="12" height="10" fill="rgba(255,240,100,0.3)"/>
+      <rect x="291" y="150" width="12" height="10" fill="rgba(255,240,100,0.5)"/>
+      <rect x="255" y="170" width="12" height="10" fill="rgba(255,240,100,0.2)"/>
+      <rect x="273" y="170" width="12" height="10" fill="rgba(255,240,100,0.6)"/>
+      <rect x="291" y="170" width="12" height="10" fill="rgba(255,240,100,0.3)"/>
+      <rect x="325" y="170" width="55" height="130" fill="#252A3B"/>
+      <rect x="380" y="120" width="45" height="180" fill="#1E2330"/>
+      <rect x="385" y="130" width="10" height="8" fill="rgba(255,240,100,0.5)"/>
+      <rect x="401" y="130" width="10" height="8" fill="rgba(255,240,100,0.3)"/>
+      <rect x="385" y="148" width="10" height="8" fill="rgba(255,240,100,0.4)"/>
+      <rect x="430" y="80" width="60" height="220" fill="#232840"/>
+      <rect x="435" y="90" width="12" height="10" fill="rgba(255,240,100,0.6)"/>
+      <rect x="453" y="90" width="12" height="10" fill="rgba(255,240,100,0.3)"/>
+      <rect x="471" y="90" width="12" height="10" fill="rgba(255,240,100,0.5)"/>
+      <rect x="495" y="150" width="50" height="150" fill="#2A2F42"/>
+      <rect x="550" y="100" width="35" height="200" fill="#1E2330"/>
+      <rect x="590" y="160" width="80" height="140" fill="#252A3B"/>
+      <rect x="595" y="170" width="12" height="10" fill="rgba(255,240,100,0.4)"/>
+      <rect x="613" y="170" width="12" height="10" fill="rgba(255,240,100,0.5)"/>
+      <rect x="631" y="170" width="12" height="10" fill="rgba(255,240,100,0.2)"/>
+      <rect x="675" y="110" width="50" height="190" fill="#232840"/>
+      <rect x="680" y="120" width="10" height="8" fill="rgba(255,240,100,0.5)"/>
+      <rect x="696" y="120" width="10" height="8" fill="rgba(255,240,100,0.3)"/>
+      <rect x="680" y="138" width="10" height="8" fill="rgba(255,240,100,0.6)"/>
+      <rect x="730" y="140" width="65" height="160" fill="#2A2F42"/>
+      <rect x="800" y="90" width="55" height="210" fill="#1E2330"/>
+      <rect x="805" y="100" width="12" height="10" fill="rgba(255,240,100,0.4)"/>
+      <rect x="823" y="100" width="12" height="10" fill="rgba(255,240,100,0.5)"/>
+      <rect x="841" y="100" width="12" height="10" fill="rgba(255,240,100,0.3)"/>
+      <rect x="860" y="160" width="45" height="140" fill="#252A3B"/>
+      <rect x="910" y="120" width="70" height="180" fill="#232840"/>
+      <rect x="915" y="130" width="12" height="10" fill="rgba(255,240,100,0.5)"/>
+      <rect x="933" y="130" width="12" height="10" fill="rgba(255,240,100,0.3)"/>
+      <rect x="951" y="130" width="12" height="10" fill="rgba(255,240,100,0.6)"/>
+      <rect x="985" y="170" width="50" height="130" fill="#2A2F42"/>
+      <rect x="1040" y="140" width="60" height="160" fill="#1E2330"/>
+      <rect x="1045" y="150" width="12" height="10" fill="rgba(255,240,100,0.4)"/>
+      <rect x="1063" y="150" width="12" height="10" fill="rgba(255,240,100,0.5)"/>
+      <rect x="1105" y="100" width="45" height="200" fill="#252A3B"/>
+      <rect x="1110" y="110" width="10" height="8" fill="rgba(255,240,100,0.3)"/>
+      <rect x="1126" y="110" width="10" height="8" fill="rgba(255,240,100,0.5)"/>
+      <rect x="1155" y="150" width="45" height="150" fill="#2A2F42"/>
+      <!-- Ground -->
+      <rect x="0" y="290" width="1200" height="10" fill="#1C2030"/>
+    </svg>
+  </div>
+
+  <!-- Road scene -->
+  <div class="hero-road" aria-hidden="true">
+    <div class="road-surface">
+      <div class="road-center-line"></div>
+    </div>
+
+    <!-- Car with exhaust -->
+    <div class="hero-vehicle hero-car">
+      <svg width="72" height="36" viewBox="0 0 72 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="16" width="60" height="16" rx="4" fill="#E05A3A"/>
+        <path d="M14 16 L20 6 L52 6 L58 16Z" fill="#C94E31"/>
+        <rect x="22" y="8" width="12" height="7" rx="1" fill="rgba(180,220,255,0.7)"/>
+        <rect x="38" y="8" width="12" height="7" rx="1" fill="rgba(180,220,255,0.7)"/>
+        <circle cx="18" cy="32" r="5" fill="#1C2030"/>
+        <circle cx="18" cy="32" r="3" fill="#3A3F50"/>
+        <circle cx="54" cy="32" r="5" fill="#1C2030"/>
+        <circle cx="54" cy="32" r="3" fill="#3A3F50"/>
+        <rect x="62" y="22" width="8" height="4" rx="2" fill="#FFD700"/>
+        <rect x="2" y="22" width="6" height="4" rx="2" fill="rgba(255,100,80,0.9)"/>
+      </svg>
+      <div class="exhaust-container">
+        <div class="exhaust-puff"></div>
+        <div class="exhaust-puff"></div>
+        <div class="exhaust-puff"></div>
+      </div>
+    </div>
+
+    <!-- Scooter -->
+    <div class="hero-vehicle hero-scooter">
+      <svg width="50" height="32" viewBox="0 0 50 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M28 8 L36 8 L40 16 L28 16 Z" fill="#4F8EF7"/>
+        <path d="M14 16 Q14 8 22 8 L28 8 L28 16 Z" fill="#3A7DE8"/>
+        <rect x="14" y="16" width="26" height="8" rx="2" fill="#4F8EF7"/>
+        <circle cx="10" cy="26" r="6" fill="#1C2030"/>
+        <circle cx="10" cy="26" r="3.5" fill="#3A3F50"/>
+        <circle cx="40" cy="26" r="6" fill="#1C2030"/>
+        <circle cx="40" cy="26" r="3.5" fill="#3A3F50"/>
+        <rect x="34" y="6" width="6" height="4" rx="1" fill="#3A7DE8"/>
+        <ellipse cx="22" cy="10" rx="4" ry="3" fill="rgba(180,220,255,0.5)"/>
+        <!-- Rider -->
+        <ellipse cx="24" cy="6" rx="4" ry="4" fill="#FFD4B0"/>
+        <rect x="20" y="8" width="8" height="8" rx="2" fill="#2D4A8A"/>
+      </svg>
+    </div>
+
+    <!-- Bicycle -->
+    <div class="hero-vehicle hero-bike">
+      <svg width="44" height="36" viewBox="0 0 44 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle class="wheel" cx="8" cy="28" r="7" fill="none" stroke="#3EC278" stroke-width="2.5"/>
+        <line class="spoke" x1="8" y1="21" x2="8" y2="35" stroke="#3EC278" stroke-width="1"/>
+        <line class="spoke" x1="1" y1="28" x2="15" y2="28" stroke="#3EC278" stroke-width="1"/>
+        <circle class="wheel" cx="36" cy="28" r="7" fill="none" stroke="#3EC278" stroke-width="2.5"/>
+        <line class="spoke" x1="36" y1="21" x2="36" y2="35" stroke="#3EC278" stroke-width="1"/>
+        <line class="spoke" x1="29" y1="28" x2="43" y2="28" stroke="#3EC278" stroke-width="1"/>
+        <path d="M8 28 L20 14 L36 28" stroke="#3EC278" stroke-width="2.5" fill="none"/>
+        <path d="M20 14 L26 8 L30 12" stroke="#3EC278" stroke-width="2" fill="none"/>
+        <rect x="24" y="6" width="8" height="3" rx="1.5" fill="#3EC278"/>
+        <!-- Rider -->
+        <ellipse cx="22" cy="10" rx="3.5" ry="3.5" fill="#FFD4B0"/>
+        <path d="M20 13 Q18 20 20 24 Q24 22 26 24 Q24 20 22 13Z" fill="#2D8A5A"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Hero content -->
+  <div class="hero-content">
+    <p class="hero-eyebrow">Your commute is stealing your life</p>
+    <h1 class="hero-headline">How many hours<br>do you <em>really</em> lose?</h1>
+    <p class="hero-sub">Calculate the real time difference between car, scooter, and bicycle for your daily route — and discover what you could do with the hours you get back.</p>
+    <div class="hero-actions">
+      <a href="#time" class="cta-button">Calculate my commute →</a>
+      <a href="#challenge" class="btn btn-outline">Take the Challenge</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <strong id="hero-stat-hours">107h</strong>
+        <span>avg. hours lost in traffic per year<sup class="fn-ref" data-study="inrix2023">2</sup></span>
+      </div>
+      <div class="hero-stat">
+        <strong>2×</strong>
+        <span>faster by bike in city center<sup class="fn-ref" data-study="ecf2022">3</sup></span>
+      </div>
+      <div class="hero-stat">
+        <strong>40%</strong>
+        <span>commute time saved with scooter<sup class="fn-ref" data-study="acem2022">4</sup></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ MODULE 1 — TIME -->
+<section id="time" class="module-section">
+  <div class="section-eyebrow">Module 1 — Time</div>
+  <h2 class="section-heading">How long is your commute?</h2>
+  <p class="section-sub">Enter your one-way distance, how often you commute, and what the road is like. We'll calculate the real difference between car, scooter/motorcycle, bicycle, and public transport.</p>
+
+  <!-- Simple inputs -->
+  <div class="simple-inputs card">
+
+    <div class="simple-row">
+      <div class="simple-field">
+        <label for="inp-distance">One-way distance</label>
+        <div class="big-input-wrap">
+          <input type="number" id="inp-distance" min="1" max="200" value="15" step="0.5">
+          <span class="big-unit">km</span>
+        </div>
+      </div>
+
+      <div class="simple-field">
+        <label for="inp-days">Days per week</label>
+        <div class="big-input-wrap">
+          <input type="number" id="inp-days" min="1" max="7" value="5" step="1">
+          <span class="big-unit">days</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="simple-field road-type-field">
+      <label>Road type — affects effective door-to-door speed</label>
+      <div class="road-toggle">
+        <button class="road-btn active" data-road="dense_city">
+          <span class="road-icon">🚦</span>
+          <strong>Dense City</strong>
+          <small>Bucharest / Rome level<br>Heavy congestion</small>
+        </button>
+        <button class="road-btn" data-road="city">
+          <span class="road-icon">🏙️</span>
+          <strong>City</strong>
+          <small>Typical European city<br>Moderate congestion</small>
+        </button>
+        <button class="road-btn" data-road="mix">
+          <span class="road-icon">🛣️</span>
+          <strong>Mixed</strong>
+          <small>City + suburban</small>
+        </button>
+        <button class="road-btn" data-road="rural">
+          <span class="road-icon">🌲</span>
+          <strong>Rural / Highway</strong>
+          <small>Open road</small>
+        </button>
+      </div>
+      <p class="road-type-note">Speeds are <strong>effective door-to-door</strong> — includes parking, walking, waiting. <a href="#bibliography" style="color:var(--accent)">See sources ↓</a></p>
+    </div>
+
+    <button class="btn btn-primary btn-large" id="btn-calculate" style="margin-top:8px;align-self:flex-start;">
+      Calculate →
+    </button>
+  </div>
+
+  <!-- Results -->
+  <div id="time-results" class="time-results hidden">
+
+    <div class="results-grid" id="results-grid"></div>
+
+    <!-- Congestion advantage banner -->
+    <div class="congestion-banner" id="congestion-banner" style="display:none;"></div>
+
+    <!-- Race track -->
+    <div class="race-section" id="race-section">
+      <div class="race-header">
+        <h3 class="race-title">Watch them race</h3>
+        <button class="race-repeat-btn" id="race-repeat-btn" style="display:none;">
+          ↺ Repeat
+        </button>
+      </div>
+      <div class="race-track">
+        <div class="race-lane">
+          <span class="race-lane-label text-car">Car</span>
+          <div class="race-lane-track">
+            <div class="race-vehicle race-car">
+              <svg width="36" height="18" viewBox="0 0 72 36"><rect x="6" y="16" width="60" height="16" rx="4" fill="#E05A3A"/><path d="M14 16 L20 6 L52 6 L58 16Z" fill="#C94E31"/><circle cx="18" cy="32" r="5" fill="#1C2030"/><circle cx="54" cy="32" r="5" fill="#1C2030"/><rect x="62" y="22" width="8" height="4" rx="2" fill="#FFD700"/></svg>
+            </div>
+          </div>
+          <div class="race-result">
+            <span class="race-time text-car" id="race-time-car">—</span>
+            <span class="race-medal" id="race-medal-car"></span>
+          </div>
+        </div>
+        <div class="race-lane">
+          <span class="race-lane-label text-scooter">Scooter</span>
+          <div class="race-lane-track">
+            <div class="race-vehicle race-scooter">
+              <svg width="26" height="18" viewBox="0 0 50 32"><path d="M28 8 L36 8 L40 16 L28 16 Z" fill="#4F8EF7"/><path d="M14 16 Q14 8 22 8 L28 8 L28 16 Z" fill="#3A7DE8"/><rect x="14" y="16" width="26" height="8" rx="2" fill="#4F8EF7"/><circle cx="10" cy="26" r="6" fill="#1C2030"/><circle cx="40" cy="26" r="6" fill="#1C2030"/></svg>
+            </div>
+          </div>
+          <div class="race-result">
+            <span class="race-time text-scooter" id="race-time-scooter">—</span>
+            <span class="race-medal" id="race-medal-scooter"></span>
+          </div>
+        </div>
+        <div class="race-lane">
+          <span class="race-lane-label text-bike">Bicycle</span>
+          <div class="race-lane-track">
+            <div class="race-vehicle race-bike">
+              <svg width="24" height="20" viewBox="0 0 44 36"><circle cx="8" cy="28" r="7" fill="none" stroke="#3EC278" stroke-width="2.5"/><circle cx="36" cy="28" r="7" fill="none" stroke="#3EC278" stroke-width="2.5"/><path d="M8 28 L20 14 L36 28" stroke="#3EC278" stroke-width="2.5" fill="none"/><path d="M20 14 L26 8 L30 12" stroke="#3EC278" stroke-width="2" fill="none"/></svg>
+            </div>
+          </div>
+          <div class="race-result">
+            <span class="race-time text-bike" id="race-time-bike">—</span>
+            <span class="race-medal" id="race-medal-bike"></span>
+          </div>
+        </div>
+        <div class="race-lane">
+          <span class="race-lane-label text-transit">Transit</span>
+          <div class="race-lane-track">
+            <div class="race-vehicle race-transit">
+              <svg width="30" height="18" viewBox="0 0 60 36">
+                <rect x="2" y="6" width="52" height="22" rx="4" fill="#F5A623"/>
+                <rect x="8" y="10" width="10" height="8" rx="1" fill="rgba(255,255,255,0.6)"/>
+                <rect x="24" y="10" width="10" height="8" rx="1" fill="rgba(255,255,255,0.6)"/>
+                <rect x="40" y="10" width="10" height="8" rx="1" fill="rgba(255,255,255,0.6)"/>
+                <rect x="2" y="26" width="52" height="4" rx="2" fill="#D4891A"/>
+                <circle cx="12" cy="31" r="4" fill="#1C2030"/><circle cx="12" cy="31" r="2.2" fill="#3A3F50"/>
+                <circle cx="44" cy="31" r="4" fill="#1C2030"/><circle cx="44" cy="31" r="2.2" fill="#3A3F50"/>
+                <rect x="0" y="26" width="4" height="4" rx="1" fill="#FFD700"/>
+                <rect x="56" y="26" width="4" height="4" rx="1" fill="rgba(255,100,80,0.9)"/>
+              </svg>
+            </div>
+          </div>
+          <div class="race-result">
+            <span class="race-time text-transit" id="race-time-transit">—</span>
+            <span class="race-medal" id="race-medal-transit"></span>
+          </div>
+        </div>
+        <div class="race-lane">
+          <span class="race-lane-label" style="color:#E91E8C">Walking</span>
+          <div class="race-lane-track">
+            <div class="race-vehicle race-walk">
+              <svg width="18" height="22" viewBox="0 0 36 44">
+                <circle cx="18" cy="5" r="5" fill="#E91E8C"/>
+                <path d="M18 10 L14 24 L8 38" stroke="#E91E8C" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <path d="M18 10 L22 24 L28 38" stroke="#E91E8C" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <path d="M14 18 L8 22" stroke="#E91E8C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <path d="M18 10 L24 22" stroke="#E91E8C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+          <div class="race-result">
+            <span class="race-time" style="color:#E91E8C" id="race-time-walk">—</span>
+            <span class="race-medal" id="race-medal-walk"></span>
+          </div>
+        </div>
+        <div class="finish-line" aria-hidden="true">🏁</div>
+      </div>
+    </div>
+
+    <!-- Extrapolations table -->
+    <div class="extrapolations-table card">
+      <h3>Your time, extrapolated</h3>
+      <div class="extrap-grid" style="grid-template-columns: 1fr repeat(5, 100px);">
+        <div class="extrap-header"></div>
+        <div class="extrap-header text-car">Car</div>
+        <div class="extrap-header text-scooter">Scooter</div>
+        <div class="extrap-header text-transit">Transit</div>
+        <div class="extrap-header text-bike">Bicycle</div>
+        <div class="extrap-header" style="color:#E91E8C">Walking</div>
+        <div class="extrap-label">One way</div>
+        <div id="ext-car-trip">—</div>
+        <div id="ext-sc-trip">—</div>
+        <div id="ext-tr-trip">—</div>
+        <div id="ext-bk-trip">—</div>
+        <div id="ext-wk-trip">—</div>
+        <div class="extrap-label">Per week</div>
+        <div id="ext-car-week">—</div>
+        <div id="ext-sc-week">—</div>
+        <div id="ext-tr-week">—</div>
+        <div id="ext-bk-week">—</div>
+        <div id="ext-wk-week">—</div>
+        <div class="extrap-label">Per year <small>(250 days)</small></div>
+        <div id="ext-car-year" class="extrap-highlight text-car">—</div>
+        <div id="ext-sc-year" class="extrap-highlight text-scooter">—</div>
+        <div id="ext-tr-year" class="extrap-highlight text-transit">—</div>
+        <div id="ext-bk-year" class="extrap-highlight text-bike">—</div>
+        <div id="ext-wk-year" class="extrap-highlight" style="color:#E91E8C">—</div>
+      </div>
+    </div>
+
+    <!-- Challenge mini -->
+    <div class="challenge-mini-box" style="margin-top:20px;">
+      <div class="challenge-mini-label">Challenge mode</div>
+      <p>I want to save</p>
+      <div class="challenge-mini-row">
+        <input type="number" id="challenge-minutes" min="5" max="120" value="30">
+        <span>min/day</span>
+        <button class="btn btn-outline" id="btn-challenge-calc" style="padding:8px 16px;font-size:13px;">Show me how</button>
+      </div>
+      <div id="challenge-mini-result" class="challenge-mini-result"></div>
+    </div>
+
+  </div>
+
+  <div class="footnotes" id="footnotes-time"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════ MODULE 2 — COST -->
+<section id="cost" class="module-section">
+  <div class="section-eyebrow">Module 2 — Costs</div>
+  <h2 class="section-heading">What does your commute cost?</h2>
+  <p class="section-sub">Adjust the numbers to match your situation. Everything updates in real time.</p>
+
+  <div class="cost-layout">
+    <!-- Inputs panel -->
+    <div class="cost-inputs card">
+      <h3 class="inputs-title">Your commute details</h3>
+
+      <div class="input-group">
+        <label>Distance (km one way)</label>
+        <div class="slider-row">
+          <input type="range" id="cost-distance-range" min="1" max="80" value="15" step="0.5">
+          <input type="number" id="cost-distance-num" min="1" max="200" value="15" step="0.5">
+          <span class="input-unit">km</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Days per week</label>
+        <div class="slider-row">
+          <input type="range" id="cost-days-range" min="1" max="7" value="5" step="1">
+          <input type="number" id="cost-days-num" min="1" max="7" value="5" step="1">
+          <span class="input-unit">days</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Fuel type</label>
+        <div class="fuel-toggle">
+          <button class="fuel-btn active" data-fuel="petrol">Petrol</button>
+          <button class="fuel-btn" data-fuel="diesel">Diesel</button>
+          <button class="fuel-btn" data-fuel="electric">Electric</button>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label id="fuel-price-label">Fuel price (€/L)</label>
+        <div class="slider-row">
+          <input type="range" id="cost-fuel-price-range" min="0.5" max="4" value="1.70" step="0.05">
+          <input type="number" id="cost-fuel-price-num" min="0.5" max="4" value="1.70" step="0.05">
+          <span class="input-unit" id="fuel-unit">€/L</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Car consumption</label>
+        <div class="slider-row">
+          <input type="range" id="cost-car-cons-range" min="3" max="20" value="8" step="0.5">
+          <input type="number" id="cost-car-cons-num" min="3" max="30" value="8" step="0.5">
+          <span class="input-unit" id="car-cons-unit">L/100km</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Parking (€/day)</label>
+        <div class="slider-row">
+          <input type="range" id="cost-parking-range" min="0" max="20" value="2" step="0.5">
+          <input type="number" id="cost-parking-num" min="0" max="50" value="2" step="0.5">
+          <span class="input-unit">€</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Car insurance (€/year)</label>
+        <div class="slider-row">
+          <input type="range" id="cost-car-ins-range" min="100" max="3000" value="600" step="50">
+          <input type="number" id="cost-car-ins-num" min="0" max="5000" value="600" step="50">
+          <span class="input-unit">€</span>
+        </div>
+      </div>
+
+      <details class="advanced-inputs">
+        <summary>Scooter / Motorcycle details</summary>
+        <div class="input-group">
+          <label>Scooter/moto consumption</label>
+          <div class="slider-row">
+            <input type="range" id="cost-sc-cons-range" min="1" max="10" value="3" step="0.25">
+            <input type="number" id="cost-sc-cons-num" min="1" max="15" value="3" step="0.25">
+            <span class="input-unit">L/100km</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Scooter/moto insurance (€/year)</label>
+          <div class="slider-row">
+            <input type="range" id="cost-sc-ins-range" min="50" max="1000" value="250" step="25">
+            <input type="number" id="cost-sc-ins-num" min="0" max="2000" value="250" step="25">
+            <span class="input-unit">€</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Scooter/moto purchase price (for breakeven)</label>
+          <div class="slider-row">
+            <input type="range" id="cost-sc-price-range" min="500" max="8000" value="2500" step="100">
+            <input type="number" id="cost-sc-price-num" min="0" max="15000" value="2500" step="100">
+            <span class="input-unit">€</span>
+          </div>
+        </div>
+      </details>
+
+      <div class="input-group" style="margin-top:16px;">
+        <label>🚌 Public transport monthly pass (€)</label>
+        <div class="slider-row">
+          <input type="range" id="cost-transit-range" min="0" max="200" value="50" step="5">
+          <input type="number" id="cost-transit-num" min="0" max="500" value="50" step="5">
+          <span class="input-unit">€/mo</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results panel -->
+    <div class="cost-results">
+      <div class="cost-cards-grid">
+        <div class="cost-card cost-card--car card">
+          <div class="cost-vehicle-label text-car">Car</div>
+          <div class="cost-monthly-label">Monthly cost</div>
+          <div class="cost-big" id="cost-monthly-car">€—</div>
+          <div class="cost-bar-wrap">
+            <div class="cost-bar cost-bar--car" id="cost-bar-car"></div>
+          </div>
+          <div class="cost-breakdown" id="cost-breakdown-car"></div>
+        </div>
+        <div class="cost-card cost-card--scooter card">
+          <div class="cost-vehicle-label text-scooter">Scooter</div>
+          <div class="cost-monthly-label">Monthly cost</div>
+          <div class="cost-big" id="cost-monthly-scooter">€—</div>
+          <div class="cost-bar-wrap">
+            <div class="cost-bar cost-bar--scooter" id="cost-bar-scooter"></div>
+          </div>
+          <div class="cost-breakdown" id="cost-breakdown-scooter"></div>
+        </div>
+        <div class="cost-card cost-card--bike card">
+          <div class="cost-vehicle-label text-bike">Bicycle</div>
+          <div class="cost-monthly-label">Monthly cost</div>
+          <div class="cost-big" id="cost-monthly-bike">€—</div>
+          <div class="cost-bar-wrap">
+            <div class="cost-bar cost-bar--bike" id="cost-bar-bike"></div>
+          </div>
+          <div class="cost-breakdown" id="cost-breakdown-bike"></div>
+        </div>
+      </div>
+
+      <!-- Savings highlights -->
+      <div class="savings-highlights">
+        <div class="saving-box card">
+          <div class="saving-icon">💰</div>
+          <div class="saving-value" id="annual-saving">€—</div>
+          <div class="saving-label">Annual savings<br>switching to scooter/moto</div>
+        </div>
+        <div class="saving-box card">
+          <div class="saving-icon">📅</div>
+          <div class="saving-value" id="breakeven-result">—</div>
+          <div class="saving-label">Breakeven<br>on scooter/moto purchase</div>
+        </div>
+        <div class="saving-box card">
+          <div class="saving-icon">🌿</div>
+          <div class="saving-value" id="co2-saving">—</div>
+          <div class="saving-label">kg CO₂ avoided<br>per year vs car<sup class="fn-ref" data-study="eea2023">5</sup></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnotes" id="footnotes-cost"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════ MODULE 3 — VALUE -->
+<section id="value" class="module-section">
+  <div class="section-eyebrow">Module 3 — Your Time</div>
+  <h2 class="section-heading">What could you do<br>with those hours?</h2>
+  <p class="section-sub">Time is the only non-renewable resource. Here's what your saved commute time translates to in real life.</p>
+
+  <!-- Auto-filled saving display -->
+  <div class="value-summary-row" id="value-summary-row">
+    <div class="value-summary-auto">
+      <div class="value-summary-label" id="value-summary-label">
+        Calculate your route in Module 1 to see your personalized results.
+      </div>
+      <div class="value-summary-big" id="value-summary-big" style="display:none;">
+        <span id="value-hours-display" class="value-hours-display">—</span>
+        <span class="value-summary-unit">hours saved / week</span>
+      </div>
+    </div>
+    <!-- What-if toggle -->
+    <div class="value-whatif" id="value-whatif" style="display:none;">
+      <button class="value-whatif-btn" id="value-whatif-btn">
+        ✏️ Adjust manually
+      </button>
+      <div class="value-whatif-control hidden" id="value-whatif-control">
+        <input type="range" id="value-hours-range" min="0.5" max="20" value="4" step="0.5">
+        <small id="value-source-hint"></small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Freelance rate -->
+  <div class="value-rate-row">
+    <label for="hourly-rate">Your hourly rate (for freelance income estimate):</label>
+    <div class="value-rate-wrap">
+      <span>€</span>
+      <input type="number" id="hourly-rate" min="5" max="500" value="30">
+      <span>/hour</span>
+    </div>
+  </div>
+
+  <div class="activity-cards-grid" id="activity-grid"></div>
+
+  <div class="footnotes" id="footnotes-value"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════ CHALLENGE MODE -->
+<section id="challenge" class="challenge-section">
+  <div class="challenge-bg" aria-hidden="true"></div>
+
+  <div class="challenge-content">
+
+    <!-- Step 1: what do you use NOW -->
+    <div class="challenge-step">
+      <p class="challenge-eyebrow">The Challenge</p>
+      <h2 class="challenge-cta-headline" style="color:#fff;margin-bottom:8px;">What do you use today?</h2>
+      <p class="challenge-subtext" style="margin-bottom:28px;">Pick your current commute vehicle. We'll show you exactly what you gain by switching.</p>
+
+      <div class="vehicle-picker" id="current-vehicle-picker">
+        <button class="vpick-btn vpick-btn--car active" data-vehicle="car">
+          <span class="vpick-icon">🚗</span>
+          <strong>Car</strong>
+        </button>
+        <button class="vpick-btn vpick-btn--scooter" data-vehicle="scooter">
+          <span class="vpick-icon">🛵</span>
+          <strong>Scooter</strong>
+        </button>
+        <button class="vpick-btn vpick-btn--transit" data-vehicle="transit">
+          <span class="vpick-icon">🚌</span>
+          <strong>Public Transport</strong>
+        </button>
+        <button class="vpick-btn vpick-btn--bike" data-vehicle="bike">
+          <span class="vpick-icon">🚲</span>
+          <strong>Bicycle</strong>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: switch TO -->
+    <div class="challenge-step" style="margin-top:40px;">
+      <h2 class="challenge-cta-headline" style="color:#fff;margin-bottom:8px;">What would you switch to?</h2>
+      <p class="challenge-subtext" style="margin-bottom:28px;">Choose the vehicle you're considering.</p>
+
+      <div class="vehicle-picker" id="target-vehicle-picker">
+        <button class="vpick-btn vpick-btn--car" data-vehicle="car">
+          <span class="vpick-icon">🚗</span>
+          <strong>Car</strong>
+        </button>
+        <button class="vpick-btn vpick-btn--scooter active" data-vehicle="scooter">
+          <span class="vpick-icon">🛵</span>
+          <strong>Scooter</strong>
+        </button>
+        <button class="vpick-btn vpick-btn--transit" data-vehicle="transit">
+          <span class="vpick-icon">🚌</span>
+          <strong>Public Transport</strong>
+        </button>
+        <button class="vpick-btn vpick-btn--bike" data-vehicle="bike">
+          <span class="vpick-icon">🚲</span>
+          <strong>Bicycle</strong>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dramatic counter -->
+    <div class="challenge-dramatic" id="challenge-dramatic" style="margin-top:48px;">
+      <p class="challenge-eyebrow" id="challenge-losing-label">Right now, you lose</p>
+      <div class="challenge-counter">
+        <span id="hours-lost-year" class="challenge-big-number">0</span>
+        <span class="challenge-big-unit">hours per year</span>
+      </div>
+      <p class="challenge-subtext" id="challenge-dramatic-sub">sitting in traffic, breathing exhaust, watching life pass by.</p>
+    </div>
+
+    <!-- Result verdict -->
+    <div class="challenge-verdict-block card" id="challenge-verdict-block" style="max-width:600px;margin:32px auto 0;">
+      <div id="challenge-switch-verdict" class="challenge-switch-verdict">
+        <p style="color:rgba(255,255,255,0.5);font-size:14px;">Calculate your route first (Module 1) to see your personalised result.</p>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="challenge-cta-block" style="margin-top:40px;">
+      <p class="challenge-cta-sub">Share this with someone who needs to see it.</p>
+      <div class="share-name-row">
+        <input type="text" id="share-name" placeholder="Your name (optional) — e.g. Alex" maxlength="32" autocomplete="off">
+      </div>
+      <button class="cta-button" id="generate-share-card">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        Generate my share card
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ SHARE CARD (off-screen, captured by html2canvas) -->
+<div id="share-card" aria-hidden="true" style="position:absolute;left:-9999px;top:0;width:1080px;height:1080px;overflow:hidden;">
+  <div class="sc-inner">
+    <!-- Top bar -->
+    <div class="sc-top-bar">
+      <div class="sc-logo">SmartCommute</div>
+      <div class="sc-tagline">Real numbers. Real savings.</div>
+    </div>
+
+    <!-- Name headline (shown only if name was entered) -->
+    <div class="sc-name-headline" id="sc-name-headline" style="display:none;">
+      <span id="sc-name-text">Alex</span> ditched the car and won back life.
+    </div>
+
+    <!-- The switch statement -->
+    <div class="sc-switch-statement">
+      <div class="sc-from-block">
+        <div class="sc-vehicle-badge sc-from-badge" id="sc-from-badge">🚗</div>
+        <div class="sc-from-label">I used to commute by</div>
+        <div class="sc-from-vehicle" id="sc-from-vehicle">Car</div>
+        <div class="sc-from-time" id="sc-from-time">— min/trip</div>
+      </div>
+
+      <div class="sc-arrow">→</div>
+
+      <div class="sc-to-block">
+        <div class="sc-vehicle-badge sc-to-badge" id="sc-to-badge">🛵</div>
+        <div class="sc-to-label">Now I use</div>
+        <div class="sc-to-vehicle" id="sc-to-vehicle">Scooter</div>
+        <div class="sc-to-time" id="sc-to-time">— min/trip</div>
+      </div>
+    </div>
+
+    <!-- The win -->
+    <div class="sc-win-bar">
+      <div class="sc-win-item">
+        <div class="sc-win-value" id="sc-win-min">—</div>
+        <div class="sc-win-label">min saved/day</div>
+      </div>
+      <div class="sc-win-item">
+        <div class="sc-win-value" id="sc-win-hours">—</div>
+        <div class="sc-win-label">hours/year reclaimed</div>
+      </div>
+      <div class="sc-win-item">
+        <div class="sc-win-value" id="sc-win-saving">—</div>
+        <div class="sc-win-label">€ saved/year</div>
+      </div>
+    </div>
+
+    <!-- Life gains -->
+    <div class="sc-life-gains">
+      <div class="sc-life-title">That time = real life</div>
+      <div class="sc-life-grid">
+        <div class="sc-life-item"><span id="sc-lg-books">—</span> extra books/year</div>
+        <div class="sc-life-item"><span id="sc-lg-movies">—</span> films/year</div>
+        <div class="sc-life-item"><span id="sc-lg-gym">—</span> gym sessions/year</div>
+        <div class="sc-life-item"><span id="sc-lg-dinners">—</span> family dinners/year</div>
+      </div>
+    </div>
+
+    <div class="sc-footer">smartcommute.app — calculate yours for free</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ BIBLIOGRAPHY -->
+<section id="bibliography" class="module-section" style="background:var(--bg-2);">
+  <div class="section-eyebrow">Methodology &amp; Sources</div>
+  <h2 class="section-heading">Scientific basis</h2>
+  <p class="section-sub">This simulator uses <strong>effective doorstep-to-doorstep speeds</strong>, not road speeds. They account for parking time, walking to/from vehicle, waiting at stops, and queue delays — the only metric that matters for a real commute.</p>
+
+
+  <div class="bib-speed-table">
+    <h3>Effective door-to-door speeds used (km/h)</h3>
+    <table class="bib-table">
+      <thead>
+        <tr>
+          <th>Road type</th>
+          <th class="text-car">Car</th>
+          <th class="text-scooter">Scooter/Moto</th>
+          <th class="text-bike">Bicycle</th>
+          <th class="text-transit">Public Transport</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>🚦 Dense City (Bucharest/Rome)</td><td>7</td><td>22</td><td>12</td><td>11</td></tr>
+        <tr><td>🏙️ City (Warsaw/Prague)</td><td>15</td><td>28</td><td>14</td><td>17</td></tr>
+        <tr><td>🛣️ Mixed (City + Suburban)</td><td>35</td><td>45</td><td>18</td><td>26</td></tr>
+        <tr><td>🌲 Rural / Highway</td><td>75</td><td>85</td><td>22</td><td>50</td></tr>
+      </tbody>
+    </table>
+    <p class="bib-table-note">Car speed includes avg. 10 min parking (dense city) / 5 min (city) / 2 min (mix/rural). Transit includes avg. 8 min walk + 5 min wait per trip. Scooter/motorcycle can use bus lanes in some jurisdictions. Dense City values calibrated on Bucharest data: TomTom 2025 = <strong>18.5 km/h daily / 13.3 km/h rush-hour</strong> road speed; Numbeo = 15.4 km/h average commute. Effective door-to-door speed is ~6 km/h (consistent with Illich 1974 and Meira 2020). Global rank: 5th most congested city.</p>
+  </div>
+
+  <ol class="bibliography-list">
+    <li id="ref-1">
+      <strong>TomTom Traffic Index 2025 (data year 2024), published January 2026.</strong> TomTom N.V.
+      <strong>Bucharest: 18.5 km/h daily average road speed, 13.3 km/h at rush hour</strong>, congestion 62.5% — 5th most congested globally, 4th in EU. Comparison: Budapest 17.2 km/h, Madrid 17.5, Warsaw 19.4, Prague 20.1, Istanbul 20.7, Stockholm 22.6 km/h (all rush-hour road speeds). Note: <em>road speed ≠ door-to-door effective speed</em> — add parking ~10 min + walking → 6–7 km/h effective for car in dense city.
+      <a href="https://www.tomtom.com/traffic-index/bucharest-traffic/" target="_blank" rel="noopener">tomtom.com/traffic-index/bucharest ↗</a>
+    </li>
+    <li id="ref-2">
+      <strong>Numbeo Traffic Index — Bucharest &amp; Eastern Europe Rankings, 2024–2025.</strong> Numbeo.com.
+      Bucharest: Traffic Index 165.98, average one-way commute <strong>41 min over 10.54 km</strong> (≈ 15.4 km/h road speed; door-to-door effective speed is lower). Comparison: Warsaw ~30 km/h, Budapest ~26 km/h, Prague ~32 km/h at rush hour (all road speed).
+      <a href="https://www.numbeo.com/traffic/in/Bucharest" target="_blank" rel="noopener">numbeo.com/traffic/Bucharest ↗</a>
+      · <a href="https://www.numbeo.com/traffic/region_rankings.jsp?title=2024&region=150" target="_blank" rel="noopener">EE Rankings 2024 ↗</a>
+    </li>
+    <li id="ref-3">
+      <strong>INRIX Global Traffic Scorecard 2022–2024.</strong> INRIX Inc.
+      Measured average congested car speeds: London 16–21 km/h, Paris 16–21 km/h, Munich 18–21 km/h, Istanbul 21–24 km/h, Palermo 14 km/h (closest benchmark to Bucharest). European drivers lose avg 55–101 hours/year to congestion depending on city. Methodology: GPS probe data, average speed across the city road network during congested periods.
+      <a href="https://inrix.com/press-releases/2023-global-traffic-scorecard/" target="_blank" rel="noopener">inrix.com/scorecard 2023 ↗</a>
+      · <a href="https://inrix.com/press-releases/2024-global-traffic-scorecard/" target="_blank" rel="noopener">2024 ↗</a>
+    </li>
+    <li id="ref-4">
+      <strong>European Cyclists' Federation — Cycling Facts &amp; Figures, 2022.</strong>
+      Cycling is the fastest mode for urban trips under 8 km during peak hours; door-to-door speed 12–15 km/h in dense urban contexts.
+      <a href="https://ecf.com/resources/cycling-facts-and-figures" target="_blank" rel="noopener">ecf.com ↗</a>
+    </li>
+    <li id="ref-4b">
+      <strong>Twisk D. et al. — Speed characteristics of bicycles in naturalistic urban traffic. Accident Analysis &amp; Prevention, 2021.</strong>
+      DOI: 10.1016/j.aap.2020.105940. Conventional bicycles average <strong>17.8 km/h</strong> in real urban conditions (Netherlands). E-bikes: 20.1 km/h.
+      <a href="https://pubmed.ncbi.nlm.nih.gov/33341683/" target="_blank" rel="noopener">PubMed ↗</a>
+    </li>
+    <li id="ref-4c">
+      <strong>Schantz P. et al. — Estimating duration-distance relations in cycle commuting. PLoS One, 2018.</strong>
+      Stockholm commuters (n=455, ages 20–65): male average <strong>20.76 km/h</strong>, female <strong>16.14 km/h</strong>.
+      <a href="https://pubmed.ncbi.nlm.nih.gov/30444927/" target="_blank" rel="noopener">PubMed ↗</a>
+    </li>
+    <li id="ref-5">
+      <strong>ACEM — Powered Two-Wheelers as a Contribution to Sustainable Urban Mobility, 2019.</strong>
+      PTW commuters 2.5–4× faster than car in peak-hour urban traffic; lane-filtering reduces commute time by ~37%.
+      <a href="https://www.acem.eu/publications/studies" target="_blank" rel="noopener">acem.eu ↗</a>
+    </li>
+    <li id="ref-6">
+      <strong>Transport for London — Travel in London Report 12, 2019.</strong>
+      Central London average car speed: 14 km/h; cycling: 20 km/h door-to-door. Referenced as Western European dense-city benchmark comparable to Bucharest conditions.
+      <a href="https://tfl.gov.uk/corporate/publications-and-reports/travel-in-london-reports" target="_blank" rel="noopener">tfl.gov.uk ↗</a>
+    </li>
+    <li id="ref-6b">
+      <strong>UITP — Global Trolleybus Figures 2025. Statistics Brief, May 2025.</strong>
+      Real measured commercial speeds for urban transit in EU cities: Sofia 18 km/h, Vilnius 18 km/h, Riga 15 km/h, Budapest 14.6 km/h, Milan 13 km/h (road speed). Bucharest: 269 trolleybuses, 3rd largest EU fleet. Door-to-door effective speed lower by ~30–40% due to walk and wait components.
+      <a href="https://www.uitp.org/publications/global-trolleybus-figures-2025/" target="_blank" rel="noopener">uitp.org ↗</a>
+    </li>
+    <li id="ref-7">
+      <strong>EEA — Transport and Environment Report 2021 (Report No 02/2022) + New Car Fleet CO₂ 2025.</strong>
+      Well-to-wheel GHG per passenger-km (EU-27, 2018): <strong>car 143 g CO₂e</strong>, bus/coach 80 g CO₂e, train 33 g CO₂e. New car fleet 2025: 96.7 g CO₂/km (WLTP). Bicycle lifecycle: ~8 g CO₂e/km (CE Delft 2022). Active modes described as "close to zero emissions" per EEA.
+      <a href="https://www.eea.europa.eu/en/analysis/publications/transport-and-environment-report-2021" target="_blank" rel="noopener">eea.europa.eu/TER2021 ↗</a>
+    </li>
+    <li id="ref-8">
+      <strong>WHO — Benefits of Active Travel for Health, 2022.</strong>
+      30 min/day cycling reduces all-cause mortality by 28% and cardiovascular risk by 35%.
+      <a href="https://www.who.int/europe/publications/i/item/9789289054553" target="_blank" rel="noopener">who.int ↗</a>
+    </li>
+    <li id="ref-8b">
+      <strong>Ungvari Z. et al. — The multifaceted benefits of walking for healthy aging: from Blue Zones to molecular mechanisms. GeroScience, 2023.</strong>
+      PMC10643563. Walking associated with <strong>32% reduced all-cause mortality risk</strong>. 8,000–10,000 steps/day reduces risk of cardiovascular disease, diabetes, and dementia. Brisk walking: 38–53% lower cardiovascular mortality. 30-min walk 5×/week = 19% reduction in coronary heart disease risk.
+      <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10643563/" target="_blank" rel="noopener">PubMed Central ↗</a>
+    </li>
+    <li id="ref-8c">
+      <strong>Lee I-M — Micro-walks can have big health benefits. Harvard T.H. Chan School of Public Health, May 2026.</strong>
+      Short walking bursts accumulate benefits equivalent to longer sessions. Fitness in middle age linked to 1–2 extra years of healthy life after 65. Regular walking functions as a "wonder drug" reducing chronic disease risk.
+      <a href="https://hsph.harvard.edu/news/micro-walks-can-have-big-health-benefits-expert-says/" target="_blank" rel="noopener">Harvard Chan School ↗</a>
+    </li>
+    <li id="ref-9">
+      <strong>Walker M.P. — Why We Sleep. Scribner, 2017.</strong>
+      Each additional hour of sleep per night associated with improvements in cognitive performance and longevity. Referenced for sleep savings calculation.
+    </li>
+    <li id="ref-10">
+      <strong>Mogridge M.J.H. — Travel in Towns. Macmillan, 1990.</strong>
+      Classic reference establishing speed parity between car and public transport in congested cities — the theoretical basis for dense-city effective speed convergence.
+    </li>
+    <li id="ref-10b">
+      <strong>Marchetti C. — Anthropological invariants in travel behavior. Technological Forecasting and Social Change, 47(1):75–88, 1994.</strong>
+      DOI: 10.1016/0040-1625(94)90041-8. <strong>Marchetti's Constant</strong>: humans consistently spend ~1 hour/day total on commuting (~30 min one-way) regardless of era or transport mode. Based on Zahavi (1974) foundational work. As faster vehicles become available, people commute farther, not shorter — time savings from switching vehicles are real and persistent.
+    </li>
+    <li id="ref-10c">
+      <strong>Zahavi Y. — Traveltime Budgets and Mobility in Urban Areas. FHWA PL-8183, US Dept. of Transportation, 1974.</strong>
+      Original empirical basis for the travel time budget constant: ~60 min/day total, ~30 min one-way. Confirmed cross-culturally. Mokhtarian &amp; Chen (2004, Transportation Research Part A) describe it as a "soft attractor" with significant variation around the mean.
+    </li>
+    <li id="ref-10d">
+      <strong>Pucher J. &amp; Buehler R. — Making Cycling Irresistible: Lessons from the Netherlands, Denmark and Germany. Transport Reviews, 28(4):495–528, 2008.</strong>
+      Cycling door-to-door competitive with or faster than car for urban trips under 7–10 km across multiple European countries. CROW Design Manual (2007) gives urban utility cycling door-to-door speed as 14–18 km/h.
+    </li>
+    <li id="ref-11">
+      <strong>Biró &amp; Lukács — Driving a Car is Shockingly Slow. Clean Cities Campaign, January 2026.</strong>
+      Budapest: nominal car speed 22.6 km/h, real effective speed (including cost-earning time) 8.2 km/h. Demonstrates large gap between road speed and true effective speed.
+      <a href="https://cleancitiescampaign.org/research/driving-a-car-is-shockingly-slow/" target="_blank" rel="noopener">cleancitiescampaign.org ↗</a>
+    </li>
+    <li id="ref-12">
+      <strong>Fietsersbond (Dutch Cyclists' Union) — cited in municipal data, Groningen, 2009.</strong>
+      Door-to-door measurement: bicycle <strong>14.2 km/h</strong> vs car <strong>9.6 km/h</strong> in Groningen — bicycles 48% faster. Dutch cities average: cyclists 5% faster overall, 10%+ faster in cities &gt;100,000 inhabitants.
+      <a href="https://www.aviewfromthecyclepath.com/2009/02/how-groningen-grew-to-be-worlds-number.html" target="_blank" rel="noopener">aviewfromthecyclepath.com ↗</a>
+    </li>
+    <li id="ref-13">
+      <strong>Meira L.H. et al. — Measuring social effective speed to improve sustainable mobility policies in developing countries. Transportation Research D, Vol. 78, 2020.</strong>
+      DOI: 10.1016/j.trd.2019.12.002. Social effective speed (distance / total time including work hours to pay for transport): <strong>Bicycle 16.74 km/h · Walking 10.91 km/h · Motorcycle 8.88 km/h · Private Car 6.34 km/h · Public Transport 5.23 km/h.</strong> Car ranks 5th out of 6 modes in effective speed.
+      <a href="https://doi.org/10.1016/j.trd.2019.12.002" target="_blank" rel="noopener">doi.org ↗</a>
+    </li>
+    <li id="ref-14">
+      <strong>Ahmed A. &amp; Stopher P. — Seventy Minutes Plus or Minus 10: A Review of Travel Time Budget Studies. Transport Reviews, 34(5):607–625, 2014.</strong>
+      DOI: 10.1080/01441647.2014.946460. Meta-analysis confirming Marchetti's Constant: global average daily travel time budget = <strong>70 minutes/day ± 10 minutes</strong>. Time savings from faster transport are typically consumed by travelling farther, not working or resting more.
+    </li>
+    <li id="ref-15">
+      <strong>Illich I. — Energy and Equity. Harper &amp; Row, 1974.</strong>
+      Verified from primary source (ivanillich.org.mx): <em>"El americano típico consagra más de 1 600 horas por año a su automóvil... Estas 1 600 horas le sirven para hacer unos 10 000 km de camino, o sea <strong>6 km en una hora</strong>."</em> The typical American's car effective speed = <strong>~6 km/h</strong> — equivalent to walking pace — when all time spent earning money to pay for it is included. Bicycle's effective speed is higher because ownership costs are minimal.
+      <a href="https://www.ivanillich.org.mx/LiEnergia.htm" target="_blank" rel="noopener">ivanillich.org.mx ↗</a>
+    </li>
+  </ol>
+
+  <p class="bib-disclaimer">
+    All speed values are estimates for typical conditions. Actual travel times depend on specific route, time of day, local infrastructure, and individual driving behaviour. The simulator is intended as an indicative planning tool, not a precision navigation system. Built by a transport engineer — feedback welcome.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<footer>
+  <p><strong>SmartCommute</strong> — Real numbers, real savings.</p>
+  <p style="margin-top:8px;">Speed averages based on TomTom Urban Mobility Index &amp; ACEM data. All calculations are estimates; individual results vary.</p>
+  <p style="margin-top:8px; font-size:12px; opacity:0.6;">Data sources cited per section. No personal data stored.</p>
+</footer>
+
+<!-- ═══════════════════════════════════════════ SCRIPTS -->
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<!-- html2canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<!-- App scripts -->
+<script src="data/studies.js"></script>
+<script src="js/calculators.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/share.js"></script>
+
+</body>
+</html>
