@@ -20,8 +20,30 @@
     bindVehiclePickers();
     bindGenerateBtn();
     renderChallengeVerdict();
-    // Re-render verdict whenever route is calculated
-    window.addEventListener('commute-calculated', renderChallengeVerdict);
+    window.addEventListener('commute-calculated', () => {
+      renderChallengeVerdict();
+      if (window.renderInlineVerdict)     window.renderInlineVerdict();
+      if (window.markCurrentVehicleCard)  window.markCurrentVehicleCard();
+    });
+
+    // Sync Challenge pickers ↔ inline pickers in Module 1
+    window.syncChallengePickers = function() {
+      const from = window._challengeFrom;
+      const to   = window._challengeTo;
+      if (from) {
+        document.querySelectorAll('#current-vehicle-picker .vpick-btn').forEach(b =>
+          b.classList.toggle('active', b.dataset.vehicle === from));
+        document.querySelectorAll('#current-vehicle-inline .chip--vehicle').forEach(b =>
+          b.classList.toggle('active', b.dataset.vehicle === from));
+      }
+      if (to) {
+        document.querySelectorAll('#target-vehicle-picker .vpick-btn').forEach(b =>
+          b.classList.toggle('active', b.dataset.vehicle === to));
+        document.querySelectorAll('#target-vehicle-inline .chip--vehicle').forEach(b =>
+          b.classList.toggle('active', b.dataset.vehicle === to));
+      }
+      renderChallengeVerdict();
+    };
   }
 
   // ── Vehicle pickers ───────────────────────────────────
@@ -253,13 +275,25 @@
       setEl('sc-win-hours',  annualH > 0 ? annualH + 'h' : '—');
       setEl('sc-win-saving', saving > 0 ? '€' + Math.round(saving) : '—');
 
-      // Life gains from actual activity calculation (if available) or computed inline
+      // Life gains
       const act    = window._lastActivityData;
       const hoursY = Math.max(annualH, 0);
       setEl('sc-lg-books',   act ? act.books   : Math.floor(hoursY / 5));
       setEl('sc-lg-movies',  act ? act.movies  : Math.floor(hoursY / 2));
       setEl('sc-lg-gym',     act ? act.gym     : Math.floor(hoursY / 0.75));
       setEl('sc-lg-dinners', act ? act.dinners : Math.floor(hoursY / 1.5));
+
+      // Emissions saving (Advanced mode)
+      const em = window._lastEmissions;
+      const emEl = document.getElementById('sc-emissions-line');
+      if (emEl) {
+        if (em && em.co2AnnKg > 0) {
+          emEl.style.display = 'block';
+          emEl.textContent = `🌿 −${em.co2AnnKg.toFixed(0)} kg CO₂/year · −${em.noxAnnG.toFixed(0)} g NOx/year`;
+        } else {
+          emEl.style.display = 'none';
+        }
+      }
     }
   }
 

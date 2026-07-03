@@ -1,5 +1,12 @@
 window.STUDIES = [
   {
+    id: 'emep_eea_2024',
+    citation: 'EMEP/EEA Air Pollutant Emission Inventory Guidebook 2024. European Environment Agency.',
+    url: 'https://www.eea.europa.eu/publications/emep-eea-guidebook-2024',
+    stat: 'Official EU emission factors for road transport. Polynomial formula EF(V) = (α·V²+β·V+γ+δ/V)/(ε·V²+ζ·V+η) for NOx, CO, VOC, PM per km at any speed. Used in the Advanced emissions calculator: 560 combinations (4 body × 7 fuel × 5 Euro × 4 road types).',
+    section: 'time',
+  },
+  {
     id: 'tomtom2023',
     citation: 'TomTom Traffic Index 2025 (data year 2024), published January 2026',
     url: 'https://www.tomtom.com/traffic-index/bucharest-traffic/',

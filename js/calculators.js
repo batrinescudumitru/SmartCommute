@@ -203,14 +203,621 @@
       }
     });
 
-    // Render initial costs (distance defaults already set)
+    // Render initial costs
     renderCostResults();
+    bindModeToggle();
+    bindAdvancedInputs();
+    bindInlineVehiclePickers();
+    initWizard();
 
     if (window.renderFootnotesForSection) {
       window.renderFootnotesForSection('footnotes-time',  ['tomtom2023', 'inrix2023', 'ecf2022', 'acem2022']);
       window.renderFootnotesForSection('footnotes-cost',  ['eea2023']);
       window.renderFootnotesForSection('footnotes-value', ['who2022', 'walker2017']);
     }
+  }
+
+  // ── Wizard navigation ────────────────────────────────
+  // ── QUIZ WIZARD ──────────────────────────────────────
+  function initWizard() {
+    const V_LABELS = { car:'Car', scooter:'Scooter/Motorcycle', bike:'Bicycle', transit:'Public Transport', walk:'Walking' };
+    const V_COLORS = { car:'var(--car-color)', scooter:'var(--scooter-color)', bike:'var(--bike-color)', transit:'var(--transit-color)', walk:'#E91E8C' };
+    const V_ICONS  = { car:'🚗', scooter:'🛵', bike:'🚲', transit:'🚌', walk:'🚶' };
+
+    function showQuiz(id) {
+      ['quiz-q1','quiz-q2','quiz-q3','quiz-route','quiz-results'].forEach(s => {
+        const el = document.getElementById(s);
+        if (el) el.classList.toggle('hidden', s !== id);
+      });
+      document.getElementById(id)?.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+
+    // Q1 — current vehicle
+    document.querySelectorAll('#q1-picker .quiz-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#q1-picker .quiz-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        window._challengeFrom = btn.dataset.vehicle;
+
+        // Build Q2 picker — all except current
+        const picker2 = document.getElementById('q2-picker');
+        if (picker2) {
+          const others = ['car','scooter','transit','bike','walk'].filter(v => v !== btn.dataset.vehicle);
+          picker2.innerHTML = others.map(v => `
+            <button class="quiz-btn" data-vehicle="${v}">
+              <span>${V_ICONS[v]}</span>
+              <strong>${V_LABELS[v]}</strong>
+            </button>`).join('');
+          picker2.querySelectorAll('.quiz-btn').forEach(b2 => {
+            b2.addEventListener('click', () => {
+              picker2.querySelectorAll('.quiz-btn').forEach(x => x.classList.remove('active'));
+              b2.classList.add('active');
+              window._challengeTo = b2.dataset.vehicle;
+              showQuiz('quiz-q3');
+            });
+          });
+        }
+        showQuiz('quiz-q2');
+      });
+    });
+
+    // Q2 back
+    document.getElementById('q2-back')?.addEventListener('click', () => showQuiz('quiz-q1'));
+
+    // Q3 — Simple or Advanced
+    document.querySelectorAll('#q3-picker .quiz-btn--mode').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#q3-picker .quiz-btn--mode').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        _mode = btn.dataset.mode;
+
+        // Show/hide advanced emission profile
+        const advEl = document.getElementById('advanced-extra');
+        if (advEl) advEl.style.display = _mode === 'advanced' ? '' : 'none';
+
+        // Update route header
+        buildRouteHeader();
+        showQuiz('quiz-route');
+      });
+    });
+
+    // Q3 back
+    document.getElementById('q3-back')?.addEventListener('click', () => showQuiz('quiz-q2'));
+
+    // Route back
+    document.getElementById('quiz-route-back')?.addEventListener('click', () => showQuiz('quiz-q3'));
+
+    // Calculate
+    document.getElementById('btn-step1-next')?.addEventListener('click', () => {
+      const inpDist = document.getElementById('inp-distance');
+      const inpDays = document.getElementById('inp-days');
+      if (inpDist) state.distanceKm  = parseFloat(inpDist.value) || 15;
+      if (inpDays) state.daysPerWeek = parseInt(inpDays.value)   || 5;
+      const roadBtn = document.querySelector('.road-btn.active');
+      if (roadBtn) state.roadType = roadBtn.dataset.road;
+
+      const result = getTimeResult();
+      window._lastTimeResult  = result;
+      window._lastDaysPerWeek = state.daysPerWeek;
+
+      buildResults(result, V_LABELS, V_COLORS, V_ICONS);
+      syncDistanceToCost();
+      syncSavingToValueModule(result);
+      updateChallengeCounterFromResult(result);
+      window.dispatchEvent(new CustomEvent('commute-calculated'));
+      showQuiz('quiz-results');
+
+      // Call after DOM is visible so GSAP/IDs work correctly
+      setTimeout(() => {
+        displayTimeResults(result);
+        renderEmissionsPanel(result, state.distanceKm * ((DIST_FACTOR[state.roadType]||{}).car||1), state.roadType);
+        if (window.runVehicleRace) {
+          window.runVehicleRace(
+            result.car.durationMin, result.scooter.durationMin,
+            result.bike.durationMin, result.transit.durationMin, result.walk.durationMin
+          );
+        }
+      }, 100);
+    });
+
+    // Start over
+    document.getElementById('btn-step3-back')?.addEventListener('click', () => {
+      window._challengeFrom = null;
+      window._challengeTo   = null;
+      showQuiz('quiz-q1');
+    });
+
+    // Show all toggle
+    document.getElementById('wiz3-showall-btn')?.addEventListener('click', () => {
+      const grid = document.getElementById('wiz3-all-grid');
+      const btn  = document.getElementById('wiz3-showall-btn');
+      if (!grid) return;
+      const wasHidden = grid.classList.contains('hidden');
+      grid.classList.toggle('hidden');
+      btn.textContent = wasHidden ? '📊 Hide all vehicles' : '📊 Show all vehicles comparison';
+      if (wasHidden && window.triggerResultAnimations) {
+        setTimeout(window.triggerResultAnimations, 50);
+      }
+    });
+  }
+
+  function buildRouteHeader() {
+    const el = document.getElementById('quiz-route-header');
+    if (!el) return;
+    const from = window._challengeFrom, to = window._challengeTo;
+    const V_ICONS = { car:'🚗', scooter:'🛵', bike:'🚲', transit:'🚌', walk:'🚶' };
+    const V_LABELS = { car:'Car', scooter:'Scooter/Moto', bike:'Bicycle', transit:'Transit', walk:'Walking' };
+    const V_COLORS = { car:'var(--car-color)', scooter:'var(--scooter-color)', bike:'var(--bike-color)', transit:'var(--transit-color)', walk:'#E91E8C' };
+    el.innerHTML = `
+      <div class="quiz-route-summary">
+        <span style="color:${V_COLORS[from]||'inherit'}">${V_ICONS[from]||''} ${V_LABELS[from]||''}</span>
+        <span class="quiz-arrow">→</span>
+        <span style="color:${V_COLORS[to]||'inherit'}">${V_ICONS[to]||''} ${V_LABELS[to]||''}</span>
+        <span class="quiz-mode-badge">${_mode === 'advanced' ? '🔬 Advanced' : '⚡ Simple'}</span>
+      </div>
+      <p class="quiz-route-prompt">Now tell us about your route:</p>`;
+  }
+
+  function buildResults(result, V_LABELS, V_COLORS, V_ICONS) {
+    const from = window._challengeFrom || 'car';
+    const to   = window._challengeTo   || 'scooter';
+
+    // Headline
+    const headline = document.getElementById('wiz3-headline');
+    if (headline) {
+      const fColor = V_COLORS[from], tColor = V_COLORS[to];
+      headline.innerHTML = `
+        <div class="wiz3-headline-inner">
+          <span class="quiz-badge" style="background:${fColor}18;color:${fColor};border:1.5px solid ${fColor}44">${V_ICONS[from]} ${V_LABELS[from]}</span>
+          <span style="font-size:20px;color:var(--text-muted)">→</span>
+          <span class="quiz-badge" style="background:${tColor}18;color:${tColor};border:1.5px solid ${tColor}44">${V_ICONS[to]} ${V_LABELS[to]}</span>
+        </div>`;
+    }
+
+    // Comparison card
+    updateStep3Verdict(result, from, to, V_LABELS, V_COLORS, V_ICONS);
+    if (window.updateValueModuleForPair) window.updateValueModuleForPair(from, to);
+    if (window.renderChallengeVerdict)   window.renderChallengeVerdict();
+  }
+
+  function showStep(stepId) {
+    ['wiz-step1','wiz-step2','wiz-step3'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('hidden', id !== stepId);
+    });
+    document.getElementById(stepId)?.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function buildStep3(result, targetVehicle, V_LABELS, V_COLORS, V_ICONS) {
+    // Headline
+    const headline = document.getElementById('wiz3-headline');
+    if (headline) {
+      const color = V_COLORS[targetVehicle];
+      headline.innerHTML = `
+        <div class="wiz3-headline-inner">
+          <span class="wiz3-from-badge" style="background:${color}18;color:${color};border:1.5px solid ${color}44">
+            ${V_ICONS[targetVehicle]} ${V_LABELS[targetVehicle]}
+          </span>
+          <span class="wiz3-headline-text">Here's what <strong style="color:${color}">${V_LABELS[targetVehicle]}</strong> looks like for your commute:</span>
+        </div>`;
+    }
+
+    // Main comparison: chosen vehicle vs car (universal reference)
+    updateStep3Verdict(result, 'car', targetVehicle, V_LABELS, V_COLORS, V_ICONS);
+
+    // Update value module
+    window._challengeFrom = 'car';
+    window._challengeTo   = targetVehicle;
+    if (window.updateValueModuleForPair) window.updateValueModuleForPair('car', targetVehicle);
+    if (window.renderChallengeVerdict) window.renderChallengeVerdict();
+  }
+
+  function updateStep3Verdict(result, from, to, V_LABELS, V_COLORS, V_ICONS) {
+    const box = document.getElementById('wiz3-comparison');
+    if (!box || !result[from] || !result[to]) return;
+
+    const diffMin  = result[from].durationMin - result[to].durationMin;
+    const days     = state.daysPerWeek;
+    const annualH  = Math.round(diffMin * days * 2 * 50 / 60);
+    const isGain   = diffMin > 0;
+    const toColor  = V_COLORS[to];
+
+    // Cost: compare from vs to specifically
+    const costFrom   = computeMonthly(from).total;
+    const costTo     = computeMonthly(to).total;
+    const annualCostSaving = Math.round((costFrom - costTo) * 12);
+    const costGain   = annualCostSaving > 0;
+    const costLoss   = annualCostSaving < 0;
+
+    const books    = Math.floor(Math.max(annualH, 0) / 5);
+    const movies   = Math.floor(Math.max(annualH, 0) / 2);
+    const gym      = Math.floor(Math.max(annualH, 0) / 0.75);
+
+    // Store for share card
+    window._lastCostData = { annual: Math.max(annualCostSaving, 0) };
+
+    let html = `<div class="wiz3-verdict-card" style="border-color:${toColor}22">
+      <div class="wiz3-verdict-title">
+        ${V_ICONS[from]} <span style="color:var(--text-muted)">${V_LABELS[from]}</span>
+        → ${V_ICONS[to]} <strong style="color:${toColor}">${V_LABELS[to]}</strong>
+      </div>
+      <div class="wiz3-stats-row">`;
+
+    // Time
+    if (isGain) {
+      html += `<div class="wiz3-stat"><span style="color:${toColor}">+${fmtMins(diffMin)}</span><small>saved per trip</small></div>`;
+      html += `<div class="wiz3-stat"><span style="color:${toColor}">+${annualH}h</span><small>per year</small></div>`;
+    } else if (diffMin < 0) {
+      html += `<div class="wiz3-stat"><span style="color:var(--car-color)">${fmtMins(Math.abs(diffMin))} more</span><small>per trip</small></div>`;
+    } else {
+      html += `<div class="wiz3-stat"><span style="color:var(--text-muted)">Same time</span><small>per trip</small></div>`;
+    }
+
+    // Cost — honest
+    if (costGain) {
+      html += `<div class="wiz3-stat"><span style="color:var(--bike-color)">+€${annualCostSaving}</span><small>saved/year</small></div>`;
+    } else if (costLoss) {
+      html += `<div class="wiz3-stat"><span style="color:var(--car-color)">−€${Math.abs(annualCostSaving)}</span><small>extra cost/year</small></div>`;
+    } else {
+      html += `<div class="wiz3-stat"><span style="color:var(--text-muted)">~Same cost</span><small>per year</small></div>`;
+    }
+
+    // Life gains (only if time saved)
+    if (isGain) {
+      if (books > 0)  html += `<div class="wiz3-stat"><span style="color:${toColor}">${books}</span><small>books/year</small></div>`;
+      if (movies > 0) html += `<div class="wiz3-stat"><span style="color:${toColor}">${movies}</span><small>films/year</small></div>`;
+      if (gym > 0)    html += `<div class="wiz3-stat"><span style="color:${toColor}">${gym}</span><small>gym sessions/year</small></div>`;
+    }
+
+    // Health for bike/walk
+    if (to === 'bike' || to === 'walk') {
+      html += `<div class="wiz3-stat"><span style="color:#E91E8C">−32%</span><small>mortality risk ❤️</small></div>`;
+    }
+
+    html += `</div>`;
+
+    // Honest note if costs go up
+    if (costLoss) {
+      html += `<p class="wiz3-verdict-note">⚠️ ${V_LABELS[to]} costs €${Math.abs(annualCostSaving)} more per year than ${V_LABELS[from]}. ${isGain ? `But you gain ${annualH} hours/year back.` : ''}</p>`;
+    }
+
+    html += `<a href="#challenge" class="wiz3-share-cta">Generate my share card →</a></div>`;
+    box.innerHTML = html;
+  }
+  let _mode = 'simple';
+  const _adv = { body: 'medium', fuel: 'petrol', euro: 'euro6' };
+
+  // ── Inline vehicle pickers (Module 1) ────────────────
+  function bindInlineVehiclePickers() {
+    // "I currently commute by" picker
+    document.querySelectorAll('#current-vehicle-inline .chip--vehicle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#current-vehicle-inline .chip--vehicle').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        window._challengeFrom = btn.dataset.vehicle;
+        // Sync to Challenge Mode picker
+        if (window.syncChallengePickers) window.syncChallengePickers();
+        // Re-render if results exist
+        if (window._lastTimeResult) {
+          markCurrentVehicleCard();
+          renderInlineVerdict();
+          if (window.updateValueModuleForPair) {
+            window.updateValueModuleForPair(window._challengeFrom, window._challengeTo || 'scooter');
+          }
+        }
+      });
+    });
+
+    // "I want to switch to" picker
+    document.querySelectorAll('#target-vehicle-inline .chip--vehicle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#target-vehicle-inline .chip--vehicle').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        window._challengeTo = btn.dataset.vehicle;
+        if (window.syncChallengePickers) window.syncChallengePickers();
+        if (window._lastTimeResult) {
+          renderInlineVerdict();
+          if (window.updateValueModuleForPair) {
+            window.updateValueModuleForPair(window._challengeFrom || 'car', window._challengeTo);
+          }
+        }
+      });
+    });
+  }
+
+  function markCurrentVehicleCard() {
+    const from = window._challengeFrom || 'car';
+    // Remove previous badge
+    document.querySelectorAll('.you-are-here-badge').forEach(b => b.remove());
+    document.querySelectorAll('.result-card').forEach(c => c.classList.remove('result-card--you-are-here'));
+    // Find card for current vehicle and mark it
+    const V_CLS = { car:'result-card--car', scooter:'result-card--scooter', transit:'result-card--transit', bike:'result-card--bike', walk:'result-card--walk' };
+    const card = document.querySelector('.' + (V_CLS[from] || ''));
+    if (card) {
+      card.classList.add('result-card--you-are-here');
+      const badge = document.createElement('div');
+      badge.className = 'you-are-here-badge';
+      badge.textContent = '← YOU';
+      card.appendChild(badge);
+    }
+  }
+
+  function renderInlineVerdict() {
+    const box      = document.getElementById('inline-switch-box');
+    const verdictEl = document.getElementById('isb-verdict');
+    if (!box || !verdictEl) return;
+
+    const r    = window._lastTimeResult;
+    const from = window._challengeFrom || 'car';
+    const to   = window._challengeTo   || 'scooter';
+
+    box.classList.add('visible');
+
+    if (!r || from === to) {
+      verdictEl.className = 'isb-verdict neutral';
+      verdictEl.textContent = from === to ? 'Pick a different vehicle to compare.' : 'Calculate your route first.';
+      return;
+    }
+
+    const V_LABELS = { car:'Car', scooter:'Scooter/Motorcycle', bike:'Bicycle', transit:'Public Transport', walk:'Walking' };
+    const days     = window._lastDaysPerWeek || 5;
+    const diffMin  = r[from].durationMin - r[to].durationMin;
+    const annualH  = Math.round(diffMin * days * 2 * 50 / 60);
+    const isGain   = diffMin > 0;
+
+    if (isGain) {
+      const books  = Math.floor(Math.max(annualH, 0) / 5);
+      const saving = window._lastCostData?.annual || 0;
+      let html = `⚡ Switch from <strong>${V_LABELS[from]}</strong> to <strong>${V_LABELS[to]}</strong>: gain <strong>${fmtMins(diffMin)} per trip</strong> · <strong>${annualH}h/year</strong>`;
+      if (saving > 0) html += ` · <strong>€${Math.round(saving)} saved/year</strong>`;
+      if (books > 0)  html += ` · <strong>${books} extra books/year</strong>`;
+      verdictEl.className = 'isb-verdict';
+      verdictEl.innerHTML = html;
+    } else if (diffMin < 0) {
+      const lossMin = Math.abs(diffMin);
+      verdictEl.className = 'isb-verdict loss';
+      verdictEl.innerHTML = `⚠️ Switching from <strong>${V_LABELS[from]}</strong> to <strong>${V_LABELS[to]}</strong> costs you <strong>${fmtMins(lossMin)} more per trip</strong>.`;
+    } else {
+      verdictEl.className = 'isb-verdict neutral';
+      verdictEl.textContent = `Similar travel time for both options on this road type.`;
+    }
+  }
+
+  // Expose for share.js sync
+  window.renderInlineVerdict = renderInlineVerdict;
+  window.markCurrentVehicleCard = markCurrentVehicleCard;
+
+  function bindModeToggle() {
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        _mode = btn.dataset.mode;
+
+        const simpleEl   = document.getElementById('simple-extra');
+        const advancedEl = document.getElementById('advanced-extra');
+        const hintEl     = document.getElementById('mode-hint');
+        const emPanel    = document.getElementById('emissions-panel');
+
+        if (_mode === 'simple') {
+          if (simpleEl)   simpleEl.style.display   = '';
+          if (advancedEl) advancedEl.style.display  = 'none';
+          if (hintEl)     hintEl.textContent = 'Basic time & cost comparison';
+          if (emPanel)    emPanel.classList.add('hidden');
+        } else {
+          if (simpleEl)   simpleEl.style.display   = 'none';
+          if (advancedEl) advancedEl.style.display  = '';
+          if (hintEl)     hintEl.textContent = 'Detailed emissions from EMEP/EEA 2024 official data';
+        }
+      });
+    });
+  }
+
+  // ── Advanced input bindings ───────────────────────────
+  function bindAdvancedInputs() {
+    // Generic chip group handler
+    function bindChips(groupId, stateKey) {
+      document.querySelectorAll(`#${groupId} .chip`).forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll(`#${groupId} .chip`).forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          _adv[stateKey] = btn.dataset[stateKey] || btn.dataset.fuel || btn.dataset.euro || btn.dataset.body;
+          // Update consumption unit if fuel changes
+          if (stateKey === 'fuel') updateFuelUnits(_adv.fuel);
+        });
+      });
+    }
+
+    bindChips('body-picker', 'body');
+    bindChips('fuel-picker', 'fuel');
+    bindChips('euro-picker', 'euro');
+
+    // Compact number inputs — advanced
+    const pairs = [
+      ['a-car-cons',   'carConsumption'],
+      ['a-sc-cons',    'scooterConsumption'],
+      ['a-fuel-price', 'fuelPrice'],
+      ['a-transit-pass','transitMonthlyPass'],
+    ];
+    pairs.forEach(([id, key]) => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', () => {
+        state[key] = parseFloat(el.value) || state[key];
+        renderCostResults();
+      });
+    });
+
+    // Compact number inputs — simple
+    const simplePairs = [
+      ['s-car-cons',    'carConsumption'],
+      ['s-sc-cons',     'scooterConsumption'],
+      ['s-transit-pass','transitMonthlyPass'],
+      ['s-fuel-price',  'fuelPrice'],
+    ];
+    simplePairs.forEach(([id, key]) => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', () => {
+        state[key] = parseFloat(el.value) || state[key];
+        // Sync one-way → Module 2 (not reverse)
+        syncToModule2(key, state[key]);
+        renderCostResults();
+      });
+    });
+  }
+
+  // ── Sync one-way: Module 1 inputs → Module 2 sliders ─
+  function syncToModule2(key, value) {
+    const map = {
+      carConsumption:    ['cost-car-cons-range',   'cost-car-cons-num'],
+      scooterConsumption:['cost-sc-cons-range',     'cost-sc-cons-num'],
+      transitMonthlyPass:['cost-transit-range',     'cost-transit-num'],
+      fuelPrice:         ['cost-fuel-price-range',  'cost-fuel-price-num'],
+      distanceKm:        ['cost-distance-range',    'cost-distance-num'],
+      daysPerWeek:       ['cost-days-range',        'cost-days-num'],
+    };
+    const ids = map[key];
+    if (!ids) return;
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = value;
+    });
+  }
+
+  function updateFuelUnits(fuel) {
+    const consUnit  = document.getElementById('a-car-cons-unit');
+    const priceUnit = document.getElementById('a-fuel-unit');
+    const isElec    = fuel === 'electric' || fuel === 'phev_electric';
+    if (consUnit)  consUnit.textContent  = isElec ? 'kWh/100km' : 'L/100km';
+    if (priceUnit) priceUnit.textContent = isElec ? '€/kWh'     : '€/L';
+  }
+
+  // ── Emissions calculation (Advanced mode) ─────────────
+  function calcEmissions(distKm, roadType, body, fuel, euro) {
+    const ef = window.EMISSION_FACTORS;
+    if (!ef) return null;
+    const factors = ef[body]?.[fuel]?.[euro]?.[roadType];
+    if (!factors) return null;
+
+    const result = {};
+    for (const [poll, gkm] of Object.entries(factors)) {
+      result[poll] = gkm * distKm;
+    }
+    // CO2 from fuel consumption
+    const CO2_PER_L = {
+      petrol: 2392, diesel: 2640, lpg: 1611, cng: 1632,
+      hybrid_petrol: 1800, phev_petrol: 1200, phev_diesel: 1400,
+      electric: 0, phev_electric: 0, phev_diesel_elec: 0,
+    };
+    const cons    = parseFloat(document.getElementById('a-car-cons')?.value || state.carConsumption);
+    const co2perL = CO2_PER_L[fuel] || 2392;
+    result['CO2_kg'] = (cons / 100) * distKm * co2perL / 1000;
+    return result;
+  }
+
+  // Scooter emissions: use L-Category data if available, else approximation
+  const SCOOTER_EF = {
+    // g/km at dense_city, city, mix, rural — approximation from EMEP L-Category averages
+    dense_city: { CO2_kg_per_km: 0.085, NOx: 0.05,  PM_Exhaust: 0.0005 },
+    city:       { CO2_kg_per_km: 0.075, NOx: 0.04,  PM_Exhaust: 0.0004 },
+    mix:        { CO2_kg_per_km: 0.065, NOx: 0.025, PM_Exhaust: 0.0003 },
+    rural:      { CO2_kg_per_km: 0.060, NOx: 0.020, PM_Exhaust: 0.0002 },
+  };
+
+  function calcScooterEmissions(distKm, roadType) {
+    const ef = SCOOTER_EF[roadType] || SCOOTER_EF.city;
+    const scCons = parseFloat(document.getElementById('a-sc-cons')?.value || state.scooterConsumption);
+    return {
+      CO2_kg:     (scCons / 100) * distKm * 2392 / 1000,
+      NOx:        ef.NOx        * distKm,
+      PM_Exhaust: ef.PM_Exhaust * distKm,
+    };
+  }
+
+  function renderEmissionsPanel(result, distKm, roadType) {
+    const panel = document.getElementById('emissions-panel');
+    if (!panel || _mode !== 'advanced') { if (panel) panel.classList.add('hidden'); return; }
+
+    const carEm = calcEmissions(distKm, roadType, _adv.body, _adv.fuel, _adv.euro);
+    if (!carEm) {
+      panel.innerHTML = `<p style="color:var(--text-muted);font-size:14px;padding:8px 0;">No emission data for this combination. Try a different fuel type or Euro standard.</p>`;
+      panel.classList.remove('hidden');
+      return;
+    }
+
+    // Switch vehicle from Challenge picker
+    const switchTo   = window._challengeTo || 'scooter';
+    const switchMeta = { car:'Car', scooter:'Scooter/Moto', bike:'Bicycle', transit:'Transit', walk:'Walking' };
+    const switchIcon = { car:'🚗', scooter:'🛵', bike:'🚲', transit:'🚌', walk:'🚶' };
+
+    // Emissions for target vehicle
+    let targetCO2 = 0, targetNOx = 0, targetPM = 0;
+    if (switchTo === 'scooter') {
+      const sEm   = calcScooterEmissions(distKm, roadType);
+      targetCO2   = sEm.CO2_kg;
+      targetNOx   = sEm.NOx;
+      targetPM    = sEm.PM_Exhaust;
+    } else if (switchTo === 'bike' || switchTo === 'walk') {
+      targetCO2 = targetNOx = targetPM = 0;
+    } else if (switchTo === 'transit') {
+      // Transit bus avg EU: ~40 g CO2eq/pkm (EEA 2023)
+      targetCO2 = distKm * 0.040;
+      targetNOx = distKm * 0.015;
+      targetPM  = distKm * 0.0002;
+    }
+
+    const carCO2   = carEm.CO2_kg || 0;
+    const carNOx   = carEm.NOx    || 0;
+    const co2Save  = Math.max(carCO2 - targetCO2, 0);
+    const noxSave  = Math.max(carNOx - targetNOx, 0);
+
+    // Annual savings (round trip × days × 50 weeks)
+    const tripsYear  = state.daysPerWeek * 2 * 50;
+    const co2AnnKg   = co2Save * tripsYear;
+    const noxAnnG    = noxSave * 1000 * tripsYear;
+
+    // Comparison rows
+    const rows = [
+      { label: 'CO₂',         car: (carCO2*1000).toFixed(0)+'g',   target: (targetCO2*1000).toFixed(0)+'g',   unit: '/trip', save: co2Save > 0, annualSave: co2AnnKg.toFixed(1)+' kg/year' },
+      { label: 'NOx',         car: (carNOx*1000).toFixed(2)+'mg', target: (targetNOx*1000).toFixed(2)+'mg', unit: '/trip', save: noxSave > 0, annualSave: noxAnnG.toFixed(1)+' g/year' },
+      { label: 'PM (exhaust)',car: (carEm.PM_Exhaust||0)*1000*distKm < 1 ? ((carEm.PM_Exhaust||0)*1000*distKm).toFixed(3)+'mg' : ((carEm.PM_Exhaust||0)*1000*distKm).toFixed(1)+'mg', target: (targetPM*1000).toFixed(3)+'mg', unit: '/trip', save: true, annualSave: '' },
+    ];
+
+    const tableRows = rows.map(r => `
+      <tr>
+        <td>${r.label}</td>
+        <td style="color:var(--car-color);font-weight:700;">${r.car}</td>
+        <td style="color:${switchTo==='bike'||switchTo==='walk'?'var(--bike-color)':'var(--scooter-color)'};font-weight:700;">${r.target}</td>
+        <td style="color:var(--bike-color);font-weight:600;">${r.save ? '−' + r.annualSave : '—'}</td>
+      </tr>`).join('');
+
+    // Urban vs rural NOx note
+    const emUrban = window.EMISSION_FACTORS?.[_adv.body]?.[_adv.fuel]?.[_adv.euro]?.['dense_city'];
+    const emRural = window.EMISSION_FACTORS?.[_adv.body]?.[_adv.fuel]?.[_adv.euro]?.['rural'];
+    let urbanNote = '';
+    if (emUrban?.NOx && emRural?.NOx) {
+      const ratio = (emUrban.NOx / emRural.NOx).toFixed(1);
+      urbanNote = `<div class="emissions-compare">At dense city speed (10 km/h), your ${_adv.fuel} car emits <strong>${ratio}× more NOx/km</strong> than at highway speed.${_adv.fuel==='diesel'?' Diesel engines are especially penalised at low speeds.':''}</div>`;
+    }
+
+    panel.innerHTML = `
+      <h3>🌍 Emission comparison — your route (one way)</h3>
+      <table class="em-compare-table">
+        <thead><tr>
+          <th>Pollutant</th>
+          <th>🚗 Your car (${_adv.fuel} ${_adv.euro.replace('_',' ')})</th>
+          <th>${switchIcon[switchTo]} ${switchMeta[switchTo]}</th>
+          <th>Annual saving if you switch</th>
+        </tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+      ${urbanNote}
+      <p style="font-size:11px;color:var(--text-light);margin-top:10px;">
+        Source: EMEP/EEA Guidebook 2024 · Calculated at ${roadType.replace('_',' ')} effective speed · One-way trip only
+      </p>`;
+    panel.classList.remove('hidden');
+
+    // Store for share card
+    window._lastEmissions = { co2AnnKg, noxAnnG, switchTo, co2PerTrip: carCO2, targetCO2 };
   }
 
   // ── Time input bindings ───────────────────────────────
@@ -257,20 +864,19 @@
     window._lastDaysPerWeek = state.daysPerWeek;
 
     displayTimeResults(result);
+    markCurrentVehicleCard();
+    renderInlineVerdict();
     syncDistanceToCost();
     syncSavingToValueModule(result);
     updateChallengeCounterFromResult(result);
-    // Notify share.js / challenge section
+    renderEmissionsPanel(result, state.distanceKm * ((DIST_FACTOR[state.roadType]||{}).car||1), state.roadType);
     window.dispatchEvent(new CustomEvent('commute-calculated'));
   }
 
   // ── Display time result cards ─────────────────────────
   function displayTimeResults(result) {
-    const section = document.getElementById('time-results');
-    const grid    = document.getElementById('results-grid');
-    if (!section || !grid) return;
-
-    section.classList.remove('hidden');
+    const grid = document.getElementById('results-grid');
+    if (!grid) return;
 
     const vehicles = [
       { key: 'car',     label: 'Car',                  icon: '🚗', cls: 'result-card--car' },
@@ -332,7 +938,7 @@
       </div>`;
     }).join('');
 
-    if (window.triggerResultAnimations) window.triggerResultAnimations();
+    // NO animation here — cards may be in hidden container, GSAP would set opacity:0
 
     // Congestion advantage banner
     renderCongestionBanner(result);
@@ -362,8 +968,6 @@
       );
     }
 
-    // Scroll results into view
-    section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   // ── Congestion advantage banner ───────────────────────
@@ -401,8 +1005,10 @@
 
   // ── Sync distance to cost module ──────────────────────
   function syncDistanceToCost() {
-    const km = state.distanceKm;
-    syncPair('cost-distance-range', 'cost-distance-num', km);
+    state.distanceKm = parseFloat(document.getElementById('inp-distance')?.value) || state.distanceKm;
+    state.daysPerWeek = parseInt(document.getElementById('inp-days')?.value) || state.daysPerWeek;
+    syncToModule2('distanceKm',  state.distanceKm);
+    syncToModule2('daysPerWeek', state.daysPerWeek);
     renderCostResults();
   }
 

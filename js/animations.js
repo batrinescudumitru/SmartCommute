@@ -13,6 +13,29 @@
     setupNavHamburger();
     setupProgressDots();
     setupRepeatBtn();
+    setupCollapsibles();
+  }
+
+  function setupCollapsibles() {
+    document.querySelectorAll('.collapsible-header').forEach(header => {
+      const targetId = header.dataset.target;
+      const body     = document.getElementById(targetId);
+      const btn      = header.querySelector('.collapse-btn');
+      if (!body) return;
+
+      // Start collapsed if body has 'collapsed' class
+      if (body.classList.contains('collapsed')) {
+        if (btn) btn.classList.remove('open');
+      } else {
+        if (btn) btn.classList.add('open');
+      }
+
+      header.addEventListener('click', () => {
+        const isOpen = !body.classList.contains('collapsed');
+        body.classList.toggle('collapsed', isOpen);
+        if (btn) btn.classList.toggle('open', !isOpen);
+      });
+    });
   }
 
   // ── Scroll fade-ins for section headings ─────────────
@@ -62,17 +85,12 @@
   // ── Result cards stagger (called by map.js after render)
   window.triggerResultAnimations = function () {
     if (!gsap) return;
-    // Short delay so DOM is painted
     setTimeout(() => {
       const cards = document.querySelectorAll('.results-grid .result-card');
+      // Start from slightly visible (0.3) so cards don't disappear if not scrolled
       gsap.fromTo(cards,
-        { opacity: 0, y: 28, scale: 0.97 },
-        {
-          opacity: 1, y: 0, scale: 1,
-          duration: 0.65,
-          ease: 'back.out(1.4)',
-          stagger: 0.12,
-        }
+        { opacity: 0.3, y: 16, scale: 0.98 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'power2.out', stagger: 0.08 }
       );
     }, 30);
   };
